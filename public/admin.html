@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AquaSense — Admin Dashboard</title>
+  <meta name="description" content="AquaSense admin panel — view irrigation reports, farmer statistics, and water saving data." />
+
+  <!-- PWA Meta -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#16a34a" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ====== Admin-specific overrides ====== */
+    body { background: #f1f5f9; }
+
+    .admin-container { max-width: 1200px; margin: 100px auto 60px; padding: 0 20px; }
+
+    .admin-header { margin-bottom: 40px; }
+    .admin-header h1 {
+      font-family: var(--font-heading); font-size: 2rem; font-weight: 800;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .admin-header h1 i { color: var(--color-primary); }
+    .admin-header p { color: var(--color-text-muted); margin-top: 6px; }
+
+    /* Stats cards */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background: var(--color-surface); border-radius: var(--radius-lg);
+      padding: 28px 24px; border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm); transition: var(--transition-base);
+      position: relative; overflow: hidden;
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .stat-card .sc-icon {
+      width: 48px; height: 48px; border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 16px;
+    }
+    .sc-blue .sc-icon { background: #dbeafe; color: #2563eb; }
+    .sc-green .sc-icon { background: #dcfce7; color: #16a34a; }
+    .sc-amber .sc-icon { background: #fef3c7; color: #d97706; }
+    .sc-purple .sc-icon { background: #ede9fe; color: #7c3aed; }
+
+    .stat-card .sc-value {
+      font-family: var(--font-heading); font-size: 30px; font-weight: 800;
+      color: var(--color-text); display: block; margin-bottom: 4px;
+    }
+    .stat-card .sc-label { font-size: 13px; font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: .5px; }
+
+    /* Chart area */
+    .admin-charts {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+      margin-bottom: 40px;
+    }
+    .admin-card {
+      background: var(--color-surface); border-radius: var(--radius-lg);
+      padding: 28px; border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+    }
+    .admin-card h3 {
+      font-family: var(--font-heading); font-weight: 700; font-size: 17px;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+    }
+    .admin-card h3 i { color: var(--color-primary); }
+    .chart-container { position: relative; height: 260px; }
+
+    /* Reports table */
+    .reports-table-card { margin-bottom: 40px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left; padding: 12px 16px; font-size: 12px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+      color: var(--color-text-muted); border-bottom: 2px solid var(--color-border);
+      background: var(--color-surface-alt);
+    }
+    tbody td {
+      padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--color-border);
+      color: var(--color-text);
+    }
+    tbody tr:hover { background: #f8fafc; }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 600;
+    }
+    .badge-high { background: #dcfce7; color: #15803d; }
+    .badge-medium { background: #fef3c7; color: #92400e; }
+    .badge-low { background: #fee2e2; color: #b91c1c; }
+
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--color-text-muted);
+    }
+    .empty-state i { font-size: 48px; margin-bottom: 16px; color: var(--color-border); display: block; }
+
+    /* Loading shimmer */
+    .shimmer {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-md); height: 24px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .admin-charts { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .admin-container { margin-top: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR (reused) -->
+  <nav id="navbar" class="navbar scrolled">
+    <div class="container navbar-inner">
+      <a href="/" class="logo">
+        <i class="fas fa-leaf"></i>
+        <span>Aqua<strong>Sense</strong></span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/" class="nav-link" data-i18n="nav.home">Home</a></li>
+        <li><a href="/#calculator" class="nav-link" data-i18n="nav.calculator">Calculator</a></li>
+        <li><a href="/admin.html" class="nav-link active" data-i18n="nav.admin">Admin</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ADMIN DASHBOARD -->
+  <div class="admin-container">
+
+    <!-- Header -->
+    <div class="admin-header">
+      <h1><i class="fas fa-shield-halved"></i> <span data-i18n="admin.title">Admin Dashboard</span></h1>
+      <p data-i18n="admin.desc">Overview of AquaSense platform statistics and irrigation reports.</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card sc-blue">
+        <div class="sc-icon"><i class="fas fa-file-lines"></i></div>
+        <span class="sc-value" id="stat-reports">—</span>
+        <span class="sc-label" data-i18n="admin.stat.reports">Total Reports</span>
+      </div>
+      <div class="stat-card sc-green">
+        <div class="sc-icon"><i class="fas fa-users"></i></div>
+        <span class="sc-value" id="stat-farmers">—</span>
+        <span class="sc-label" data-i18n="admin.stat.farmers">Farmers Registered</span>
+      </div>
+      <div class="stat-card sc-amber">
+        <div class="sc-icon"><i class="fas fa-tint-slash"></i></div>
+        <span class="sc-value" id="stat-water-saved">—</span>
+        <span class="sc-label" data-i18n="admin.stat.water">Water Saved (L)</span>
+      </div>
+      <div class="stat-card sc-purple">
+        <div class="sc-icon"><i class="fas fa-gauge-high"></i></div>
+        <span class="sc-value" id="stat-avg-eff">—</span>
+        <span class="sc-label" data-i18n="admin.stat.efficiency">Avg Efficiency</span>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="admin-charts">
+      <div class="admin-card">
+        <h3><i class="fas fa-chart-pie"></i> <span data-i18n="admin.chart.crop">Crop Distribution</span></h3>
+        <div class="chart-container"><canvas id="cropChart"></canvas></div>
+      </div>
+      <div class="admin-card">
+        <h3><i class="fas fa-chart-bar"></i> <span data-i18n="admin.chart.water">Water Usage Over Reports</span></h3>
+        <div class="chart-container"><canvas id="waterUsageChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Recent Reports Table -->
+    <div class="admin-card reports-table-card">
+      <h3><i class="fas fa-list"></i> <span data-i18n="admin.table.title">Recent Irrigation Reports</span></h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-i18n="admin.table.num">#</th>
+              <th data-i18n="admin.table.crop">Crop</th>
+              <th data-i18n="admin.table.soil">Soil</th>
+              <th data-i18n="admin.table.land">Land (ac)</th>
+              <th data-i18n="admin.table.rain">Rain (mm)</th>
+              <th data-i18n="admin.table.water">Water (L)</th>
+              <th data-i18n="admin.table.efficiency">Efficiency</th>
+              <th data-i18n="admin.table.impact">Impact</th>
+              <th data-i18n="admin.table.date">Date</th>
+            </tr>
+          </thead>
+          <tbody id="reports-body">
+            <tr><td colspan="9" class="empty-state"><i class="fas fa-inbox"></i>Loading data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div class="container">
+        <p data-i18n="footer.copy">&copy; 2026 AquaSense Admin Panel. Made with <i class="fas fa-heart"></i> for Indian Farmers.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/offline-sync.js"></script>
+</body>
+</html>

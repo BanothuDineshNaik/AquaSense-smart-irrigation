@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AquaSense — Smart Irrigation Decision Support</title>
+  <meta name="description" content="AquaSense helps farmers calculate the optimal irrigation water for their crops using crop type, soil conditions, land size, and rainfall data." />
+
+  <!-- PWA Meta -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#16a34a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="AquaSense" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===================== LOADER ===================== -->
+  <div id="page-loader" class="loader-overlay">
+    <div class="loader-content">
+      <div class="loader-drop">
+        <i class="fas fa-tint"></i>
+      </div>
+      <p class="loader-text">AquaSense</p>
+    </div>
+  </div>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav id="navbar" class="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="logo" id="logo-link">
+        <i class="fas fa-leaf"></i>
+        <span>Aqua<strong>Sense</strong></span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#hero" class="nav-link active" data-section="hero" data-i18n="nav.home">Home</a></li>
+        <li><a href="#problem" class="nav-link" data-section="problem" data-i18n="nav.why">Why AquaSense</a></li>
+        <li><a href="#benefits" class="nav-link" data-section="benefits" data-i18n="nav.benefits">Benefits</a></li>
+        <li><a href="#calculator" class="nav-link" data-section="calculator" data-i18n="nav.calculator">Calculator</a></li>
+        <li><a href="/admin.html" class="nav-link" data-i18n="nav.admin">Admin</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===================== HERO SECTION ===================== -->
+  <section id="hero" class="hero-section">
+    <div class="container hero-grid">
+      <div class="hero-text animate-on-scroll">
+        <span class="hero-badge"><i class="fas fa-seedling"></i> <span data-i18n="hero.badge">Intelligent Irrigation</span></span>
+        <h1 data-i18n="hero.title">Smart Water Decisions for <span class="highlight">Smart Farmers</span></h1>
+        <p class="hero-subtitle" data-i18n="hero.subtitle">AquaSense uses crop science &amp; real rainfall data to tell you exactly how much water your farm needs — saving water, energy, and boosting your yield.</p>
+        <div class="hero-actions">
+          <a href="#calculator" class="btn btn-primary btn-lg" id="cta-button">
+            <i class="fas fa-calculator"></i> <span data-i18n="hero.cta">Check Your Irrigation Plan</span>
+          </a>
+          <a href="#problem" class="btn btn-outline btn-lg">
+            <i class="fas fa-info-circle"></i> <span data-i18n="hero.learn">Learn More</span>
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number" data-count="30">0</span><span class="stat-suffix">%</span>
+            <span class="stat-label" data-i18n="hero.stat.water">Water Saved</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" data-count="2500">0</span><span class="stat-suffix">+</span>
+            <span class="stat-label" data-i18n="hero.stat.farmers">Farmers Helped</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" data-count="5">0</span>
+            <span class="stat-label" data-i18n="hero.stat.crops">Crop Types</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image animate-on-scroll">
+        <img src="images/hero-illustration.png" alt="Smart farming illustration showing irrigation technology" />
+        <div class="hero-float-card card-a">
+          <i class="fas fa-tint"></i>
+          <span data-i18n="hero.float.water">Water Optimized</span>
+        </div>
+        <div class="hero-float-card card-b">
+          <i class="fas fa-chart-line"></i>
+          <span data-i18n="hero.float.yield">Yield +20%</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0,64 C360,120 720,0 1080,64 C1260,96 1380,80 1440,64 L1440,120 L0,120 Z" fill="var(--color-bg)"></path></svg>
+    </div>
+  </section>
+
+  <!-- ===================== PROBLEM SECTION ===================== -->
+  <section id="problem" class="section problem-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag" data-i18n="problem.tag">The Challenge</span>
+        <h2 data-i18n="problem.title">India's Irrigation Crisis</h2>
+        <p class="section-desc" data-i18n="problem.desc">Over 80% of India's freshwater is consumed by agriculture — yet most farmers irrigate based on guesswork, leading to massive waste and poor crop health.</p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card animate-on-scroll">
+          <div class="problem-icon"><i class="fas fa-water"></i></div>
+          <h3 data-i18n="problem.water.title">Water Wastage</h3>
+          <p data-i18n="problem.water.desc">Traditional flood irrigation wastes up to 60% of water through evaporation and runoff, draining precious groundwater reserves.</p>
+        </div>
+        <div class="problem-card animate-on-scroll">
+          <div class="problem-icon"><i class="fas fa-bolt"></i></div>
+          <h3 data-i18n="problem.energy.title">Energy Drain</h3>
+          <p data-i18n="problem.energy.desc">Farmers pump excessive groundwater using electric or diesel motors, resulting in huge electricity bills and carbon emissions.</p>
+        </div>
+        <div class="problem-card animate-on-scroll">
+          <div class="problem-icon"><i class="fas fa-chart-bar"></i></div>
+          <h3 data-i18n="problem.yield.title">Low Yield</h3>
+          <p data-i18n="problem.yield.desc">Over-watering or under-watering directly impacts crop quality, reducing yield by up to 25% and hurting farmer income.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SOLUTION SECTION ===================== -->
+  <section id="solution" class="section solution-section">
+    <div class="container">
+      <div class="solution-grid">
+        <div class="solution-text animate-on-scroll">
+          <span class="section-tag" data-i18n="solution.tag">Our Solution</span>
+          <h2 data-i18n="solution.title">How AquaSense Helps</h2>
+          <p data-i18n="solution.desc">AquaSense is a data-driven decision support tool that calculates the precise water requirement for your crops — factoring in <strong>crop type</strong>, <strong>soil conditions</strong>, <strong>land area</strong>, and <strong>recent rainfall</strong>.</p>
+          <ul class="solution-steps">
+            <li><span class="step-num">1</span> <span data-i18n="solution.step1">Enter your crop &amp; field details</span></li>
+            <li><span class="step-num">2</span> <span data-i18n="solution.step2">Our algorithm calculates optimal water needs</span></li>
+            <li><span class="step-num">3</span> <span data-i18n="solution.step3">Get a clear irrigation recommendation instantly</span></li>
+          </ul>
+          <a href="#calculator" class="btn btn-primary"><i class="fas fa-arrow-right"></i> <span data-i18n="solution.cta">Try the Calculator</span></a>
+        </div>
+        <div class="solution-visual animate-on-scroll">
+          <div class="solution-card-stack">
+            <div class="sol-card sc1">
+              <i class="fas fa-cloud-rain"></i>
+              <h4 data-i18n="solution.card1.title">Rainfall Aware</h4>
+              <p data-i18n="solution.card1.desc">Adjusts automatically based on recent rainfall data.</p>
+            </div>
+            <div class="sol-card sc2">
+              <i class="fas fa-layer-group"></i>
+              <h4 data-i18n="solution.card2.title">Soil Adaptive</h4>
+              <p data-i18n="solution.card2.desc">Sandy, loamy, or clay — each soil type factored in.</p>
+            </div>
+            <div class="sol-card sc3">
+              <i class="fas fa-seedling"></i>
+              <h4 data-i18n="solution.card3.title">Crop Specific</h4>
+              <p data-i18n="solution.card3.desc">Each crop has its own water blueprint.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BENEFITS SECTION ===================== -->
+  <section id="benefits" class="section benefits-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag" data-i18n="benefits.tag">Why Choose Us</span>
+        <h2 data-i18n="benefits.title">Benefits of AquaSense</h2>
+        <p class="section-desc" data-i18n="benefits.desc">Empowering farmers with actionable irrigation intelligence.</p>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-card animate-on-scroll">
+          <div class="benefit-icon"><i class="fas fa-hand-holding-water"></i></div>
+          <h3 data-i18n="benefit.water.title">Save Water</h3>
+          <p data-i18n="benefit.water.desc">Reduce water usage by up to 30% with precise irrigation recommendations tailored to your exact crop and soil conditions.</p>
+        </div>
+        <div class="benefit-card animate-on-scroll">
+          <div class="benefit-icon"><i class="fas fa-wheat-awn"></i></div>
+          <h3 data-i18n="benefit.yield.title">Improve Crop Yield</h3>
+          <p data-i18n="benefit.yield.desc">Optimal watering leads to healthier crops and up to 20% higher yield — directly increasing your farm income.</p>
+        </div>
+        <div class="benefit-card animate-on-scroll">
+          <div class="benefit-icon"><i class="fas fa-plug-circle-bolt"></i></div>
+          <h3 data-i18n="benefit.energy.title">Reduce Electricity Waste</h3>
+          <p data-i18n="benefit.energy.desc">Pump only what's needed. Cut electricity consumption from irrigation motors and lower your energy bills significantly.</p>
+        </div>
+        <div class="benefit-card animate-on-scroll">
+          <div class="benefit-icon"><i class="fas fa-mobile-screen-button"></i></div>
+          <h3 data-i18n="benefit.easy.title">Easy to Use</h3>
+          <p data-i18n="benefit.easy.desc">Designed for simplicity. Just enter your farm details and get an actionable irrigation plan in seconds — no tech skills needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CALCULATOR SECTION ===================== -->
+  <section id="calculator" class="section calculator-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag"><i class="fas fa-calculator"></i> <span data-i18n="calc.tag">Irrigation Calculator</span></span>
+        <h2 data-i18n="calc.title">Calculate Your Irrigation Plan</h2>
+        <p class="section-desc" data-i18n="calc.desc">Fill in your farm details below and get a personalized water recommendation in seconds.</p>
+      </div>
+
+      <div class="calculator-layout">
+        <!-- FORM CARD -->
+        <div class="calc-form-card animate-on-scroll" id="calc-form-card">
+          <form id="irrigation-form" novalidate>
+            <div class="form-group">
+              <label for="crop-type"><i class="fas fa-seedling"></i> <span data-i18n="calc.crop.label">Crop Type</span></label>
+              <select id="crop-type" required>
+                <option value="" disabled selected data-i18n-option="calc.crop.placeholder">Select your crop…</option>
+                <option value="rice" data-i18n-option="calc.crop.rice">🌾 Rice</option>
+                <option value="cotton" data-i18n-option="calc.crop.cotton">🌿 Cotton</option>
+                <option value="groundnut" data-i18n-option="calc.crop.groundnut">🥜 Groundnut</option>
+                <option value="maize" data-i18n-option="calc.crop.maize">🌽 Maize</option>
+                <option value="sugarcane" data-i18n-option="calc.crop.sugarcane">🎋 Sugarcane</option>
+              </select>
+              <span class="form-error" id="crop-error" data-i18n="calc.error.crop">Please select a crop type.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="soil-type"><i class="fas fa-layer-group"></i> <span data-i18n="calc.soil.label">Soil Type</span></label>
+              <select id="soil-type" required>
+                <option value="" disabled selected data-i18n-option="calc.soil.placeholder">Select soil type…</option>
+                <option value="sandy" data-i18n-option="calc.soil.sandy">🏜️ Sandy</option>
+                <option value="loamy" data-i18n-option="calc.soil.loamy">🌍 Loamy</option>
+                <option value="clay" data-i18n-option="calc.soil.clay">🧱 Clay</option>
+              </select>
+              <span class="form-error" id="soil-error" data-i18n="calc.error.soil">Please select a soil type.</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="land-size"><i class="fas fa-ruler-combined"></i> <span data-i18n="calc.land.label">Land Size (Acres)</span></label>
+                <input type="number" id="land-size" data-i18n-placeholder="calc.land.placeholder" placeholder="e.g. 2.5" min="0.1" step="0.1" required />
+                <span class="form-error" id="land-error" data-i18n="calc.error.land">Enter a valid land size (&gt; 0).</span>
+              </div>
+              <div class="form-group">
+                <label for="rainfall"><i class="fas fa-cloud-rain"></i> <span data-i18n="calc.rain.label">Recent Rainfall (mm)</span></label>
+                <input type="number" id="rainfall" data-i18n-placeholder="calc.rain.placeholder" placeholder="e.g. 15" min="0" step="1" required />
+                <span class="form-error" id="rain-error" data-i18n="calc.error.rain">Enter valid rainfall (≥ 0).</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="calc-btn">
+              <i class="fas fa-calculator"></i> <span data-i18n="calc.submit">Calculate Irrigation Plan</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- RESULTS DASHBOARD -->
+        <div class="results-dashboard hidden" id="results-dashboard">
+          <!-- Water Required -->
+          <div class="result-card water-card animate-on-scroll">
+            <div class="result-icon"><i class="fas fa-tint"></i></div>
+            <div class="result-info">
+              <span class="result-label" data-i18n="result.water.label">Required Water</span>
+              <span class="result-value" id="result-water">—</span>
+              <span class="result-unit" data-i18n="result.water.unit">Liters</span>
+            </div>
+          </div>
+
+          <!-- Irrigation Recommendation -->
+          <div class="result-card schedule-card animate-on-scroll">
+            <div class="result-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="result-info">
+              <span class="result-label" data-i18n="result.schedule.label">Next Irrigation</span>
+              <span class="result-value" id="result-schedule">—</span>
+            </div>
+          </div>
+
+          <!-- Rainfall Impact -->
+          <div class="result-card rain-card animate-on-scroll">
+            <div class="result-icon"><i class="fas fa-cloud-showers-heavy"></i></div>
+            <div class="result-info">
+              <span class="result-label" data-i18n="result.rain.label">Rainfall Impact</span>
+              <span class="result-value" id="result-rain-impact">—</span>
+            </div>
+          </div>
+
+          <!-- Efficiency Score -->
+          <div class="result-card efficiency-card animate-on-scroll">
+            <div class="result-icon-wrap">
+              <svg class="progress-ring" width="120" height="120">
+                <circle class="progress-ring-bg" cx="60" cy="60" r="52" />
+                <circle class="progress-ring-fill" cx="60" cy="60" r="52" id="efficiency-ring" />
+              </svg>
+              <span class="efficiency-number" id="efficiency-number">0</span>
+            </div>
+            <div class="result-info">
+              <span class="result-label" data-i18n="result.efficiency.label">Water Efficiency Score</span>
+              <span class="result-desc" id="efficiency-desc">—</span>
+            </div>
+          </div>
+
+          <!-- Water Saving Message -->
+          <div class="result-card tip-card animate-on-scroll">
+            <div class="result-icon"><i class="fas fa-lightbulb"></i></div>
+            <div class="result-info">
+              <span class="result-label" data-i18n="result.tip.label">Water Saving Tip</span>
+              <p class="result-tip" id="result-tip">—</p>
+            </div>
+          </div>
+
+          <!-- Chart -->
+          <div class="result-card chart-card animate-on-scroll">
+            <h3 class="chart-title"><i class="fas fa-chart-bar"></i> <span data-i18n="result.chart.title">Water Requirement Comparison</span></h3>
+            <div class="chart-wrap">
+              <canvas id="waterChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Recalculate -->
+          <div class="recalc-wrap">
+            <button class="btn btn-outline" id="recalc-btn"><i class="fas fa-redo"></i> <span data-i18n="result.recalc">Recalculate</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TIPS SECTION ===================== -->
+  <section id="tips" class="section tips-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag"><i class="fas fa-lightbulb"></i> <span data-i18n="tips.tag">Pro Tips</span></span>
+        <h2 data-i18n="tips.title">Irrigation Best Practices</h2>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-item animate-on-scroll">
+          <div class="tip-num">01</div>
+          <h4 data-i18n="tip1.title">Irrigate Early Morning</h4>
+          <p data-i18n="tip1.desc">Water between 6–8 AM to minimize evaporation and maximize absorption.</p>
+        </div>
+        <div class="tip-item animate-on-scroll">
+          <div class="tip-num">02</div>
+          <h4 data-i18n="tip2.title">Check Soil Moisture</h4>
+          <p data-i18n="tip2.desc">Insert a finger 2 inches into soil — if dry, it's time to irrigate.</p>
+        </div>
+        <div class="tip-item animate-on-scroll">
+          <div class="tip-num">03</div>
+          <h4 data-i18n="tip3.title">Use Drip Irrigation</h4>
+          <p data-i18n="tip3.desc">Drip systems deliver water directly to roots, saving up to 50% water.</p>
+        </div>
+        <div class="tip-item animate-on-scroll">
+          <div class="tip-num">04</div>
+          <h4 data-i18n="tip4.title">Mulch Your Fields</h4>
+          <p data-i18n="tip4.desc">A layer of mulch reduces surface evaporation and keeps soil moist longer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="logo"><i class="fas fa-leaf"></i> Aqua<strong>Sense</strong></a>
+        <p data-i18n="footer.desc">Empowering Indian farmers with data-driven irrigation intelligence. A step towards sustainable agriculture.</p>
+      </div>
+      <div class="footer-links">
+        <h4 data-i18n="footer.links">Quick Links</h4>
+        <ul>
+          <li><a href="#hero" data-i18n="nav.home">Home</a></li>
+          <li><a href="#problem" data-i18n="nav.why">Why AquaSense</a></li>
+          <li><a href="#benefits" data-i18n="nav.benefits">Benefits</a></li>
+          <li><a href="#calculator" data-i18n="nav.calculator">Calculator</a></li>
+          <li><a href="#tips" data-i18n="tips.tag">Tips</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4 data-i18n="footer.project">Project Info</h4>
+        <p><i class="fas fa-graduation-cap"></i> <span data-i18n="footer.college">College Innovation Project</span></p>
+        <p><i class="fas fa-code"></i> <span data-i18n="footer.built">Built with HTML, CSS &amp; JS</span></p>
+        <p><i class="fas fa-leaf"></i> <span data-i18n="footer.green">For a greener future</span></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p data-i18n="footer.copy">&copy; 2026 AquaSense. Made with <i class="fas fa-heart"></i> for Indian Farmers.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="js/i18n.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/offline-sync.js"></script>
+</body>
+</html>
